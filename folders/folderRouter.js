@@ -8,7 +8,7 @@ const jsonParser = express.json();
 
 const serializeFolder = (folder) => ({
   id: folder.id,
-  folder_name: folder.folder_name,
+  name: folder.name,
 });
 
 folderRouter
@@ -22,8 +22,8 @@ folderRouter
       .catch(next);
   })
   .post(jsonParser, (req, res, next) => {
-    const { folder_name } = req.body;
-    const newFolder = { folder_name };
+    const { name } = req.body;
+    const newFolder = { name };
     for (const [key, value] of Object.entries(newFolder))
       if (value == null) {
         return res.status(400).json({
@@ -33,9 +33,9 @@ folderRouter
   });
 
 folderRouter
-  .route('/:folder_id')
+  .route('/:id')
   .all((req, res, next) => {
-    FolderService.getById(req.app.get('db'), req.params.folder_id)
+    FolderService.getById(req.app.get('db'), req.params.id)
       .then((folder) => {
         if (!folder) {
           return res.status(404).json({
@@ -48,11 +48,11 @@ folderRouter
       .get((req, res, next) => {
         res.json({
           id: res.folder.id,
-          title: xss(res.folder.folder_name),
+          title: xss(res.folder.name),
         });
       })
       .delete((req, res, next) => {
-        FolderService.deleteFolder(req.app.get('db'), req.params.folder_id)
+        FolderService.deleteFolder(req.app.get('db'), req.params.id)
           .then(() => {
             res.status(204).end();
           })
@@ -70,11 +70,7 @@ folderRouter
         },
       });
     }
-    FolderService.updateFolder(
-      req.app.get('db'),
-      req.params.folder_id,
-      folderToUpdate
-    )
+    FolderService.updateFolder(req.app.get('db'), req.params.id, folderToUpdate)
       .then((numRowsAffected) => {
         res.status(204).end();
       })

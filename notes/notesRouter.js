@@ -8,9 +8,9 @@ const jsonParser = express.json();
 
 const serializenotes = (note) => ({
   id: note.id,
-  note_title: note.note_title,
-  content: note.note_content,
-  folder_id: note.folder_id,
+  name: note.name,
+  content: note.content,
+  folderId: note.folderId,
 });
 
 notesRouter
@@ -24,8 +24,8 @@ notesRouter
       .catch(next);
   })
   .post(jsonParser, (req, res, next) => {
-    const { note_title, note_content, folder_id } = req.body;
-    const newnote = { note_title, note_content, folder_id };
+    const { name, content, folderId } = req.body;
+    const newnote = { name, content, folderId };
     for (const [key, value] of Object.entries(newnote))
       if (value == null) {
         return res.status(400).json({
@@ -35,9 +35,9 @@ notesRouter
   });
 
 notesRouter
-  .route('/:notes_id')
+  .route('/:id')
   .all((req, res, next) => {
-    NoteService.getById(req.app.get('db'), req.params.note_id)
+    NoteService.getById(req.app.get('db'), req.params.id)
       .then((notes) => {
         if (!notes) {
           return res.status(404).json({
@@ -50,11 +50,11 @@ notesRouter
       .get((req, res, next) => {
         res.json({
           id: res.note.id,
-          title: xss(res.note.note_title),
+          title: xss(res.note.name),
         });
       })
       .delete((req, res, next) => {
-        NoteService.deletenotes(req.app.get('db'), req.params.note_id)
+        NoteService.deletenotes(req.app.get('db'), req.params.id)
           .then(() => {
             res.status(204).end();
           })
@@ -62,8 +62,8 @@ notesRouter
       });
   })
   .patch(jsonParser, (req, res, next) => {
-    const { note_title, note_content, folder_id } = req.body;
-    const notesToUpdate = { note_title, note_content, folder_id };
+    const { name, content, folderId } = req.body;
+    const notesToUpdate = { name, content, folderId };
     const numberOfValues = Object.values(notesToUpdate).filter(Boolean).length;
     if (numberOfValues === 0) {
       return res.status(400).json({
@@ -72,11 +72,7 @@ notesRouter
         },
       });
     }
-    NoteService.updatenotes(
-      req.app.get('db'),
-      req.params.note_id,
-      notesToUpdate
-    )
+    NoteService.updatenotes(req.app.get('db'), req.params.id, notesToUpdate)
       .then((numRowsAffected) => {
         res.status(204).end();
       })
