@@ -21,3 +21,5 @@ const FolderService = {
     return knex('folders').where({ id }).update(newFolderFields);
   },
 };
+
+module.exports = FolderService;

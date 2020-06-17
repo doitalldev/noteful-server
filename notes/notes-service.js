@@ -1,9 +1,9 @@
 const NoteService = {
-  getAllUsers(knex) {
+  getAllNotes(knex) {
     return knex.select('*').from('notes');
   },
 
-  insertUser(knex, newNote) {
+  insertNote(knex, newNote) {
     return knex
       .insert(newNote)
       .into('notes')
@@ -17,13 +17,13 @@ const NoteService = {
     return knex.from('notes').select('*').where('id', id).first();
   },
 
-  deleteUser(knex, id) {
+  deleteNote(knex, id) {
     return knex('notes').where({ id }).delete();
   },
 
-  updateUser(knex, id, newNote) {
+  updateNote(knex, id, newNote) {
     return knex('notes').where({ id }).update(newNote);
   },
 };
 
-module.exports = UsersService;
+module.exports = NoteService;
