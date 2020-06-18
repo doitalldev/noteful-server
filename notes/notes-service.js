@@ -24,6 +24,9 @@ const NoteService = {
   updateNote(knex, id, newNote) {
     return knex('notes').where({ id }).update(newNote);
   },
+  getByFolderId(knex, id) {
+    return knex('notes').select('*').where({ folderid: id });
+  },
 };
 
 module.exports = NoteService;

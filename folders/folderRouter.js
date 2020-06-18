@@ -35,29 +35,28 @@ folderRouter
 folderRouter
   .route('/:id')
   .all((req, res, next) => {
-    FolderService.getById(req.app.get('db'), req.params.id)
-      .then((folder) => {
-        if (!folder) {
-          return res.status(404).json({
-            error: { message: "Folder doesn't exist" },
-          });
-        }
-        res.folder = folder;
-        next();
-      })
-      .get((req, res, next) => {
-        res.json({
-          id: res.folder.id,
-          title: xss(res.folder.name),
+    FolderService.getById(req.app.get('db'), req.params.id).then((folder) => {
+      if (!folder) {
+        return res.status(404).json({
+          error: { message: "Folder doesn't exist" },
         });
+      }
+      res.folder = folder;
+      next();
+    });
+  })
+  .get((req, res, next) => {
+    res.json({
+      id: res.folder.id,
+      title: xss(res.folder.name),
+    });
+  })
+  .delete((req, res, next) => {
+    FolderService.deleteFolder(req.app.get('db'), req.params.id)
+      .then(() => {
+        res.status(204).end();
       })
-      .delete((req, res, next) => {
-        FolderService.deleteFolder(req.app.get('db'), req.params.id)
-          .then(() => {
-            res.status(204).end();
-          })
-          .catch(next);
-      });
+      .catch(next);
   })
   .patch(jsonParser, (req, res, next) => {
     const { title } = req.body;
