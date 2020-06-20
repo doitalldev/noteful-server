@@ -10,7 +10,7 @@ CREATE TABLE notes (
     name TEXT NOT NULL,
     content TEXT,
     modified TIMESTAMPTZ DEFAULT now() NOT NULL,
-    folderId INTEGER REFERENCES folders(id) ON DELETE CASCADE
+    folderid INTEGER REFERENCES folders(id) ON DELETE CASCADE
 );
 
 INSERT INTO folders (name) VALUES (
@@ -23,7 +23,7 @@ INSERT INTO folders (name) VALUES (
     'Test Folder 3'
 );
 
-INSERT INTO notes (name, content, folderId)
+INSERT INTO notes (name, content, folderid)
 VALUES ('Note Title 1', 'Note Content 1', 1),
 ('Note Title 2', 'Note Content 2', 2),
 ('Note Title 3', 'Note Content 3', 3);

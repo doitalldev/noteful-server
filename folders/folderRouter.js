@@ -17,19 +17,27 @@ folderRouter
     const knexInstance = req.app.get('db');
     FolderService.getAllFolders(knexInstance)
       .then((folders) => {
-        res.json(folders.map(serializeFolder));
+        res.json(folders);
       })
       .catch(next);
   })
   .post(jsonParser, (req, res, next) => {
     const { name } = req.body;
-    const newFolder = { name };
-    for (const [key, value] of Object.entries(newFolder))
-      if (value == null) {
-        return res.status(400).json({
-          error: { message: `Missing '${key}' in request body` },
-        });
-      }
+
+    if (!name) {
+      return res.status(400).json({ error: { message: 'No name detected' } });
+    }
+
+    const newFolder = {
+      name: name,
+    };
+
+    const knexInstance = req.app.get('db');
+    FolderService.insertFolder(knexInstance, newFolder)
+      .then((folder) => {
+        res.status(201).send(folder);
+      })
+      .catch(next);
   });
 
 folderRouter
