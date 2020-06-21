@@ -14,10 +14,6 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.send('Hello, world!');
-});
-
 app.use('/api/folders', folderRouter);
 app.use('/api/notes', notesRouter);
 
